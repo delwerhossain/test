@@ -1,11 +1,12 @@
 import { Helmet } from "react-helmet-async";
 import Context from "../hook/useContext";
 import Swal from "sweetalert2";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 
 const EditFood = () => {
   const allData = useLoaderData();
-  console.log(allData);
+  //   console.log(allData);
+  let navigate = useNavigate();
   // const {_id, food_name, food_image, donator_image, donator_name,food_quantity, pickup_location, additional_note, expiration_days} = food
   const { user } = Context();
   console.log(user);
@@ -34,7 +35,7 @@ const EditFood = () => {
 
     console.log(NewFood);
 
-    fetch("https://donation-server-site-psi.vercel.app/AddFood", {
+    fetch(`https://donation-server-site-psi.vercel.app/AddFood/${allData._id}`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -44,20 +45,21 @@ const EditFood = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        if (data.insertedId) {
+        if (data.matchedCount > 0) {
           Swal.fire({
             title: "Success!",
-            text: "Product Added Successfully",
+            text: "Product Edit Successfully",
             icon: "success",
             confirmButtonText: "Done",
           });
+          navigate(`/featureFood/${allData._id}`);
         }
       });
   };
   return (
     <div>
       <Helmet>
-        <title>AddFood</title>
+        <title>Edit Food</title>
       </Helmet>
 
       <section className="p-6 dark:bg-gray-800 dark:text-gray-50">

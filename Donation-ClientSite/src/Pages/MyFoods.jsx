@@ -69,7 +69,10 @@ const MyFoods = () => {
             >
               Delete
             </button>
-            <Link to={`/editFood/${row?.original?._id}`} className="btn btn-warning">
+            <Link
+              to={`/editFood/${row?.original?._id}`}
+              className="btn btn-warning"
+            >
               Edit
             </Link>
           </div>

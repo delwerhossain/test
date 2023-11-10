@@ -121,13 +121,35 @@ async function run() {
       // console.log(result);
       res.send(result);
     });
+    // food added
+    app.post("/AddFood/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const updatedFoodData = req.body;
+
+      try {
+        const result = await featureFoods.updateOne(query, {
+          $set: updatedFoodData,
+        });
+        console.log(result);
+ 
+        if (result.modifiedCount > 0) {
+          // Document updated successfully
+          res.send(result);
+        } else {
+          // No document was modified (probably the same data)
+          res.send({ success: false, message: "No changes detected" });
+        }
+      } catch (error) {
+        console.error("Error updating document:", error);
+        res.status(500).send({ error: "Internal Server Error" });
+      }
+    });
+
     // food request added
     app.post("/AddFoodRequest", async (req, res) => {
       const Food = req.body;
-      // console.log(Food);
-      // console.log("hello");
       const result = await requestFoods.insertOne(Food);
-      // console.log(result);
       res.send(result);
     });
 
