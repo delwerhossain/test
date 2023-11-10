@@ -91,6 +91,22 @@ async function run() {
       res.send(result);
     });
 
+    // featureFood delete
+    app.delete("/featureFood/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log("Received id:", id);
+
+      try {
+        const query = { _id: new ObjectId(id) };
+        const result = await featureFoods.deleteOne(query);
+        console.log(result);
+        res.send(result);
+      } catch (error) {
+        console.error("Error deleting document:", error);
+        res.status(500).send({ error: "Internal Server Error" });
+      }
+    });
+
     app.get("/AddFoodRequest", async (req, res) => {
       const foodRequests = await requestFoods.find().toArray();
       // console.log(foodRequests);
@@ -115,18 +131,21 @@ async function run() {
       res.send(result);
     });
 
-    // request delete
-
+    // requestFood delete
     app.delete("/AddFoodRequest/:id", async (req, res) => {
       const id = req.params.id;
-      // console.log(id);
-      const query = { _id: new ObjectId(id) };
-      const result = await requestFoods.deleteOne(Food);
-      // console.log(result);
-      res.send(result);
+      console.log("Received id:", id);
+
+      try {
+        const query = { _id: new ObjectId(id) };
+        const result = await featureFoods.deleteOne(query);
+        console.log(result);
+        res.send(result);
+      } catch (error) {
+        console.error("Error deleting document:", error);
+        res.status(500).send({ error: "Internal Server Error" });
+      }
     });
-
-
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });

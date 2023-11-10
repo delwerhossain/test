@@ -1,97 +1,243 @@
-import axios from "axios";
-import { Checkbox, Table } from "flowbite-react";
-import { useEffect, useState } from "react";
+
+
+
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { useTable } from "react-table";
+import Context from "../hook/useContext";
+import axios from "axios";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
-const MyFoodRequest = () => {
-  const [requestFood, setRequestFood] = useState([]);
-  const [requestFoodcards, setRequestFoodCards] = useState([]);
+const MyFoods = () => {
+  const [data, setData] = useState([]);
+  const { user } = Context();
 
-  // useEffect
-  useEffect(() => {
-    axios.get("http://localhost:5000/AddFoodRequest").then((res) => {
-      setRequestFood(res.data);
-      console.log(requestFood);
-    });
-  }, []);
+  // State to track the item to be deleted or edited
+  // const [selectedItemId, setSelectedItemId] = useState(null);
 
-  // delete request
-  const handleDelete = (_id) => {
-    console.log(_id);
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        fetch(`http://localhost:5000/AddFoodRequest/${_id}`, {
-          method: "DELETE",
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log(data);
-            Swal.fire("Deleted!", "Your Product has been deleted.", "success");
-            const remaining = requestFoodcards.filter(
-              (card) => card._id !== _id
-            );
-            setRequestFoodCards(remaining);
-          });
-      }
-    });
+  const allData = () => {
+    fetch("http://localhost:5000/AddFoodRequest")
+      .then((response) => response.json())
+      .then((apiData) => {
+        console.log(apiData);
+        // Filter the data based on the user's email
+        const filteredData = apiData.filter(
+          (item) => item.email === user.email
+        );
+        setData(filteredData);
+      })
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
+      });
   };
+  useEffect(() => {
+    // Fetch the API data based on the provided link (replace with your actual fetch logic)
+    allData();
+  }, [user.email]);
+
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "Food Name",
+        accessor: "food_name",
+      },
+      {
+        Header: "food_quantity",
+        accessor: "food_quantity",
+      },
+      {
+        Header: "pickup location",
+        accessor: "pickup_location",
+      },
+      {
+        Header: "Additional Note",
+        accessor: "additional_note",
+      },
+      // {
+      //   Header: "Actions",
+      //   Cell: ({ row }) => (
+      //     <div className="flex flex-wrap gap-3 justify-center">
+      //       <button
+      //         className="btn btn-error"
+      //         onClick={() => handleDelete(row.original._id)}
+      //       >
+      //         Delete
+      //       </button>
+      //       <button
+      //         className="btn btn-warning"
+      //         onClick={() => handleEdit(row.original._id)}
+      //       >
+      //         Edit
+      //       </button>
+      //     </div>
+      //   ),
+      // },
+    ],
+    []
+  );
+
+  const handleDelete = (id) => {
+    const swalWithBootstrapButtons = withReactContent(
+      Swal.mixin({
+        customClass: {
+          confirmButton: "btn btn-success",
+          cancelButton: "btn btn-danger",
+        },
+        buttonsStyling: false,
+      })
+    );
+
+    // Show a confirmation sweetalert2
+    swalWithBootstrapButtons
+      .fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true,
+      })
+      .then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            // Hit the API to delete the item
+          await axios
+            .delete(`http://localhost:5000/AddFoodRequest/${id}`)
+            .then((result) => {
+              console.log(result);
+              if (result.data.deletedCount > 0) {
+                console.log(result.data);
+                swalWithBootstrapButtons.fire({
+                  title: "Deleted!",
+                  text: "Your file has been deleted.",
+                  icon: "success",
+                });
+                allData();
+              }
+            });
+            // Update the state or refetch data if needed
+            // setData(updatedData);
+            // Display success notification
+          } catch (error) {
+            console.error("Error deleting item: ", error);
+            // Display error notification
+            swalWithBootstrapButtons.fire({
+              title: "Error",
+              text: "An error occurred while deleting the item.",
+              icon: "error",
+            });
+          }
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          // Display cancellation notification
+          swalWithBootstrapButtons.fire({
+            title: "Cancelled",
+            text: "Your imaginary file is safe :)",
+            icon: "error",
+          });
+        }
+      });
+  };
+
+  const handleEdit = (id) => {
+    // Set the selected item id for editing
+    console.log(id);
+    toast(id);
+
+    // setSelectedItemId(id);
+  };
+
+  // Function to confirm and execute delete
+  // const confirmDelete = () => {
+  //   // Add your logic to delete the item with the selectedItemId
+  //   console.log(`Delete item with ID: ${selectedItemId}`);
+  //   // Clear the selectedItemId after deletion
+  //   setSelectedItemId(null);
+  // };
+
+  // // Function to handle edit (you can implement your own logic)
+  // const confirmEdit = () => {
+  //   console.log(`Edit item with ID: ${selectedItemId}`);
+  //   // Clear the selectedItemId after editing
+  //   setSelectedItemId(null);
+  // };
+
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable({
+      columns,
+      data,
+    });
 
   return (
     <div>
+      <ToastContainer />
       <Helmet>
-        <title>My_Food_Request</title>
+        <title>My_Foods</title>
       </Helmet>
-      <Table hoverable>
-        <Table.Head>
-          <Table.HeadCell className="p-4">
-            <Checkbox />
-          </Table.HeadCell>
-          <Table.HeadCell>Food Name</Table.HeadCell>
-          <Table.HeadCell>Donar Name</Table.HeadCell>
-          <Table.HeadCell>Pickup Location</Table.HeadCell>
-          <Table.HeadCell>Expire Date</Table.HeadCell>
-          <Table.HeadCell>Request Date</Table.HeadCell>
-
-          <Table.HeadCell>
-            <span className="sr-only">DELETE</span>
-          </Table.HeadCell>
-        </Table.Head>
-        <Table.Body className="divide-y">
-          {requestFood.map((food) => (
-            <div key={food?._id}>
-              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                  {food.food_name}
-                </Table.Cell>
-                <Table.Cell>Black</Table.Cell>
-                <Table.Cell>Accessories</Table.Cell>
-                <Table.Cell>$99</Table.Cell>
-                <Table.Cell>
-                  <button onClick={handleDelete}>
-                    <a
-                      href="#"
-                      className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
-                    >
-                      DELETE
-                    </a>
-                  </button>
-                </Table.Cell>
-              </Table.Row>
-            </div>
+      <h1 className="text-6xl text-center my-3">My Foods</h1>
+      <table
+        className="w-full text-black"
+        {...getTableProps()}
+        style={{ border: "1px solid black" }}
+      >
+        <thead>
+          {headerGroups.map((headerGroup, i) => (
+            <tr key={i} {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column, j) => (
+                <th
+                  key={j}
+                  {...column.getHeaderProps()}
+                  style={{
+                    borderBottom: "1px solid black",
+                    background: "lightgray",
+                  }}
+                >
+                  {column.render("Header")}
+                </th>
+              ))}
+            </tr>
           ))}
-        </Table.Body>
-      </Table>
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {rows.map((row, i) => {
+            prepareRow(row);
+            return (
+              <tr key={i} {...row.getRowProps()}>
+                {row.cells.map((cell, j) => {
+                  return (
+                    <td
+                      key={j}
+                      {...cell.getCellProps()}
+                      style={{
+                        padding: "10px",
+                        border: "1px solid black",
+                        background: "papayawhip",
+                      }}
+                    >
+                      {cell.render("Cell")}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      {/* Confirmation modals for delete and edit */}
+      {/* {selectedItemId && (
+        <div>
+          <div>Are you sure you want to delete this item?</div>
+          <button onClick={confirmDelete}>Yes</button>
+          <button onClick={() => setSelectedItemId(null)}>No</button>
+        </div>
+      )} */}
     </div>
   );
 };
 
-export default MyFoodRequest;
+export default MyFoods;

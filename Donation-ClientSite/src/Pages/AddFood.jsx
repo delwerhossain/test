@@ -26,6 +26,7 @@ const AddFood = () => {
       additional_note,
       expiration_days,
       status,
+      email: user?.email,
     };
 
     console.log(NewFood);
