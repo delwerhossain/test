@@ -62,7 +62,7 @@ const AuthProvider = ({ children }) => {
       // if user exists then issue a token
       // if (User) {
       //   axios
-      //     .post("http://localhost:5000/jwt", loggedUser, {
+      //     .post("https://donation-server-site-psi.vercel.app/jwt", loggedUser, {
       //       withCredentials: true,
       //     })
       //     .then((res) => {
@@ -70,7 +70,7 @@ const AuthProvider = ({ children }) => {
       //     });
       // } else {
       //   axios
-      //     .post("http://localhost:5000/logout", loggedUser, {
+      //     .post("https://donation-server-site-psi.vercel.app/logout", loggedUser, {
       //       withCredentials: true,
       //     })
       //     .then((res) => {

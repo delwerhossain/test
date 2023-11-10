@@ -1,6 +1,3 @@
-
-
-
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useTable } from "react-table";
@@ -20,13 +17,13 @@ const MyFoods = () => {
   // const [selectedItemId, setSelectedItemId] = useState(null);
 
   const allData = () => {
-    fetch("http://localhost:5000/AddFoodRequest")
+    fetch("https://donation-server-site-psi.vercel.app/AddFoodRequest")
       .then((response) => response.json())
       .then((apiData) => {
         console.log(apiData);
         // Filter the data based on the user's email
         const filteredData = apiData.filter(
-          (item) => item.email === user.email
+          (item) => item.email === user?.email
         );
         setData(filteredData);
       })
@@ -37,7 +34,7 @@ const MyFoods = () => {
   useEffect(() => {
     // Fetch the API data based on the provided link (replace with your actual fetch logic)
     allData();
-  }, [user.email]);
+  }, [user?.email]);
 
   const columns = React.useMemo(
     () => [
@@ -106,20 +103,22 @@ const MyFoods = () => {
         if (result.isConfirmed) {
           try {
             // Hit the API to delete the item
-          await axios
-            .delete(`http://localhost:5000/AddFoodRequest/${id}`)
-            .then((result) => {
-              console.log(result);
-              if (result.data.deletedCount > 0) {
-                console.log(result.data);
-                swalWithBootstrapButtons.fire({
-                  title: "Deleted!",
-                  text: "Your file has been deleted.",
-                  icon: "success",
-                });
-                allData();
-              }
-            });
+            await axios
+              .delete(
+                `https://donation-server-site-psi.vercel.app/AddFoodRequest/${id}`
+              )
+              .then((result) => {
+                console.log(result);
+                if (result.data.deletedCount > 0) {
+                  console.log(result.data);
+                  swalWithBootstrapButtons.fire({
+                    title: "Deleted!",
+                    text: "Your file has been deleted.",
+                    icon: "success",
+                  });
+                  allData();
+                }
+              });
             // Update the state or refetch data if needed
             // setData(updatedData);
             // Display success notification

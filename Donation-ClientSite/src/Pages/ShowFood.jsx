@@ -60,11 +60,12 @@ const ShowFood = () => {
       pickup_location,
       additional_note,
       expiration_days,
+      email: user?.email,
     };
 
     console.log(FoodRequest);
 
-    fetch("http://localhost:5000/AddFoodRequest", {
+    fetch("https://donation-server-site-psi.vercel.app/AddFoodRequest", {
       method: "POST",
       headers: {
         "content-type": "application/json",

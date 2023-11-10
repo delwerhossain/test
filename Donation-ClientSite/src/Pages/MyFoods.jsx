@@ -8,6 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { Link } from "react-router-dom";
 
 const MyFoods = () => {
   const [data, setData] = useState([]);
@@ -17,13 +18,13 @@ const MyFoods = () => {
   // const [selectedItemId, setSelectedItemId] = useState(null);
 
   const allData = () => {
-    fetch("http://localhost:5000/featureFood")
+    fetch("https://donation-server-site-psi.vercel.app/featureFood")
       .then((response) => response.json())
       .then((apiData) => {
         console.log(apiData);
         // Filter the data based on the user's email
         const filteredData = apiData.filter(
-          (item) => item.email === user.email
+          (item) => item.email === user?.email
         );
         setData(filteredData);
       })
@@ -34,7 +35,7 @@ const MyFoods = () => {
   useEffect(() => {
     // Fetch the API data based on the provided link (replace with your actual fetch logic)
     allData();
-  }, [user.email]);
+  }, [user?.email]);
 
   const columns = React.useMemo(
     () => [
@@ -64,16 +65,13 @@ const MyFoods = () => {
           <div className="flex flex-wrap gap-3 justify-center">
             <button
               className="btn btn-error"
-              onClick={() => handleDelete(row.original._id)}
+              onClick={() => handleDelete(row?.original?._id)}
             >
               Delete
             </button>
-            <button
-              className="btn btn-warning"
-              onClick={() => handleEdit(row.original._id)}
-            >
+            <Link to={`/editFood/${row?.original?._id}`} className="btn btn-warning">
               Edit
-            </button>
+            </Link>
           </div>
         ),
       },
@@ -108,7 +106,9 @@ const MyFoods = () => {
           try {
             // Hit the API to delete the item
             await axios
-              .delete(`http://localhost:5000/featureFood/${id}`)
+              .delete(
+                `https://donation-server-site-psi.vercel.app/featureFood/${id}`
+              )
               .then((result) => {
                 console.log(result);
                 if (result.data.deletedCount > 0) {

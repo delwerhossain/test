@@ -19,13 +19,15 @@ const FeatureFood = () => {
     }
   };
   const allData = () => {
-    axios.get("http://localhost:5000/featureFood").then((res) => {
-      const sortedHomeFood = res.data.sort(
-        (a, b) => a.expiration_days - b.expiration_days
-      );
-      setFeatureFood(sortedHomeFood);
-      console.log(featureFood);
-    });
+    axios
+      .get("https://donation-server-site-psi.vercel.app/featureFood")
+      .then((res) => {
+        const sortedHomeFood = res.data.sort(
+          (a, b) => a.expiration_days - b.expiration_days
+        );
+        setFeatureFood(sortedHomeFood);
+        console.log(featureFood);
+      });
   };
   useEffect(() => {
     allData();

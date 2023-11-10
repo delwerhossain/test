@@ -10,21 +10,32 @@ import { Helmet } from "react-helmet-async";
 const Home = () => {
   const [homeFood, setHomeFood] = useState([]);
   useEffect(() => {
-    axios.get("http://localhost:5000/homeFood").then((res) => {
-      const sortedHomeFood = res.data.sort(
-        (a, b) => b.food_quantity - a.food_quantity
-      );
-      setHomeFood(sortedHomeFood);
-      console.log(homeFood);
-    });
+    axios
+      .get("https://donation-server-site-psi.vercel.app/homeFood")
+      .then((res) => {
+        const sortedHomeFood = res.data.sort(
+          (a, b) => b.food_quantity - a.food_quantity
+        );
+        setHomeFood(sortedHomeFood);
+        console.log(homeFood);
+      });
   }, []);
 
   // const food = useLoaderData()
 
   return (
     <div>
-      <Banner></Banner>
-      <section className="grid mx-auto justify-center items-center">
+      <Banner
+        data-aos-delay="300"
+        data-aos-duration="2000"
+        data-aos="flip-left"
+      ></Banner>
+      <section
+        data-aos-delay="300"
+        data-aos-duration="2000"
+        data-aos="flip-right"
+        className="grid mx-auto justify-center items-center"
+      >
         <Helmet>
           <title>Home</title>
         </Helmet>
@@ -37,9 +48,21 @@ const Home = () => {
           <button className="btn btn-warning text-white ">See All</button>
         </div>
       </section>
-      <HomeLay2></HomeLay2>
-      <About></About>
-      <Contract></Contract>
+      <HomeLay2
+        data-aos-delay="300"
+        data-aos-duration="2000"
+        data-aos="flip-left"
+      ></HomeLay2>
+      <About
+        data-aos-delay="300"
+        data-aos-duration="2000"
+        data-aos="flip-right"
+      ></About>
+      <Contract
+        data-aos-delay="300"
+        data-aos-duration="2000"
+        data-aos="flip-left"
+      ></Contract>
     </div>
   );
 };

@@ -12,6 +12,7 @@ import ErrorPage from "../Pages/ErrorPage";
 import MyFoods from "../Pages/MyFoods";
 import MyFoodRequest from "../Pages/MyFoodRequest";
 import PrivateRoute from "../Layouts/PrivateRoute";
+import EditFood from "../Pages/editFood";
 
 const Router = createBrowserRouter([
   {
@@ -63,7 +64,21 @@ const Router = createBrowserRouter([
           </PrivateRoute>
         ),
         loader: ({ params }) =>
-          fetch(`http://localhost:5000/featureFood/${params.id}`),
+          fetch(
+            `https://donation-server-site-psi.vercel.app/featureFood/${params.id}`
+          ),
+      },
+      {
+        path: "editFood/:id",
+        element: (
+          <PrivateRoute>
+            <EditFood></EditFood>
+          </PrivateRoute>
+        ),
+        loader: ({ params }) =>
+          fetch(
+            `https://donation-server-site-psi.vercel.app/featureFood/${params.id}`
+          ),
       },
       {
         path: "login",

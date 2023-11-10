@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate, } from "react-router-dom";
 import Lottie from 'lottie-react';
-import loginAnimation from '../../public/loginAnimation.json'
+import loginAnimation from "../data/loginAnimation.json";
 import { FcGoogle } from "react-icons/fc";
 import { FaEyeSlash,FaEye } from 'react-icons/fa';
 import { useState } from "react";
