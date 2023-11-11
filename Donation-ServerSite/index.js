@@ -47,7 +47,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     const featureFoods = client.db("foodDonation").collection("featureFood");
     const requestFoods = client.db("foodDonation").collection("requestFoods");
 
@@ -116,10 +116,14 @@ async function run() {
     // food added
     app.post("/AddFood", async (req, res) => {
       const Food = req.body;
-      // console.log(Food);
-      const result = await featureFoods.insertOne(Food);
-      // console.log(result);
-      res.send(result);
+      try {
+        // console.log(Food);
+        const result = await featureFoods.insertOne(Food);
+        // console.log(result);
+        res.send(result);
+      } catch (error) {
+        res.send({ success: false, message: error.message });
+      }
     });
     // food added
     app.post("/AddFood/:id", async (req, res) => {
@@ -132,7 +136,7 @@ async function run() {
           $set: updatedFoodData,
         });
         console.log(result);
- 
+
         if (result.modifiedCount > 0) {
           // Document updated successfully
           res.send(result);
@@ -149,8 +153,12 @@ async function run() {
     // food request added
     app.post("/AddFoodRequest", async (req, res) => {
       const Food = req.body;
-      const result = await requestFoods.insertOne(Food);
-      res.send(result);
+      try {
+        const result = await requestFoods.insertOne(Food);
+        res.send(result);
+      } catch (error) {
+        res.send({ success: false, message: error.message });
+      }
     });
 
     // requestFood delete
